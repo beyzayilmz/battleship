@@ -126,4 +126,91 @@ def manuel_yerleştir(tahta):
                 else:     
                     print(f"{KIRMIZI}Oraya sığmaz, tekrar dene.{R}")
             except ( ValueError, IndexError):
-                print(f"{KIRMIZI}Geçersiz giriş. Örnek: A1{R}")     
+                print(f"{KIRMIZI}Geçersiz giriş. Örnek: A1{R}")
+
+#oyuncu atışı 
+def oyuncu_atışı(rakip_tahta):
+    while True:
+        try:
+            girdi = input(f"\n{BOLD} Hedef koordinat (örn B7): {R}").strip().upper()
+            r = HARFLER.index(girdi[0])
+            c = int(girdi[1:]) - 1
+            if not (0 <= r < BOYUT and 0 <= c < BOYUT):
+                print(f"{KIRMIZI}Geçersiz koordinat.{R}"); continue
+            if rakip_tahta[r][c] in (ISABET, KAÇIRMA):
+                print(f"{SARI} Buraya zaten attın. {R}"); continue
+            break
+        except(ValueError, IndexError):
+            print(f"{KIRMIZI} Geçersiz giriş. Örnek: A1{R}")
+    return r, c
+
+#AI
+class AkıllıAI:
+    """ Hunt/Target modu + olasılık haritası ile oyna AI"""
+
+    def __init__(self):
+        self.atılmış = set() #(r,c) - atılan tüm hücreler
+        self.isabet_kümesi = [] #(r,c) - isabetler ( henüz batmayan)
+        self.hedef_kuyruğu = [] #(r,c) - target modunda denenecekler
+        self.eksen = None #"Y" veya "D" - tespit edilen eksen
+        self.kalan_gemiler = [b for _, b in GEMILER]
+
+#olasılık haritası
+    def olasılık_haritası(self):
+        harita = [[0] * BOYUT for _ in range(BOYUT)]
+
+        for boyut in self.kalan_gemiler:
+            #yatay
+            for r in range(BOYUT):
+                for c in range(BOYUT - boyut + 1):
+                    hücreler = [(r, c+i) for i in range(boyut)]
+                    if all((hr,hc) not in self.atılmış for hr, hc in hücreler):
+                        for hr, hc in hücreler:
+                            harita[hr][hc] += 1
+            #dikey
+            for r in range(BOYUT - boyut + 1):
+                hücreler = [(r+1, c) for i in range(boyut)]
+                if all((hr,hc) not in self.atılmış for hr, hc in hücreler):
+                    for hr, hc in hücreler:
+                        harita[hr][hc] += 1
+        #zaten atılanları sıfırla
+        for r, c in self.atılmış:
+            harita[r][c] = 0
+        return harita
+
+#atış seç
+def hedef_seç(self):
+    #target modu: kuyrukta bekleyen hedef varsa onu kullan
+    while self.hedef_kuyruğu:
+        hedef = self.hedef_kuyruğu.pop(0)
+        if hedef not in self.atılmış:
+            return hedef
+    #hunt modu: olasılık haritasından en yüksek hücreyi seç
+    harita = self.olasılık_haritası()
+
+    #checkerboard filtresi ( isabette değil, saf hunt'ta)
+    if not self.isabet_kümesi:
+        en_yüksek = -1
+        adaylar = []
+        for r in range(BOYUT):
+            for c in range(BOYUT):
+                if(r+c) % 2 == 0 and (r,c) not in self.atılmış:
+                    if harita[r][c] > en_yüksek:
+                        en_yüksek = harita[r][c]
+                        adaylar = [(r,c)]
+                    elif harita[r][c] == en_yüksek:
+                        adaylar.append((r,c))
+        if adaylar:
+            return random.choice(adaylar)
+    #checkerboard filtresiz en yüksek olasılıklı
+    en_yüksek = -1
+    adaylar = []
+    for r in range(BOYUT):
+        for c in range(BOYUT):
+            if (r,c) not in self.atılmış:
+                if harita[r][c] > en_yüksek:
+                    en_yüksek = harita[r][c]
+                    adaylar = [(r,c)]
+                elif harita[r][c] == en_yüksek:
+                    adaylar.append((r,c))
+    return random.choice(adaylar) if adaylar else None                                                                                       

@@ -213,4 +213,20 @@ def hedef_seç(self):
                     adaylar = [(r,c)]
                 elif harita[r][c] == en_yüksek:
                     adaylar.append((r,c))
-    return random.choice(adaylar) if adaylar else None                                                                                       
+    return random.choice(adaylar) if adaylar else None     
+
+#komşu ekle (target modu)
+def komşuları_ekle(self, r, c):
+    """isabet sonrası olası komşuları kuyruğa ekle"""
+    if self.eksen == "Y":
+        candidates = [(r, c-1), (r, c+1)]
+    elif self.eksen == "D":
+        candidates = [(r-1, c), (r+1, c)]
+    else:
+        candidates = [(r-1, c), (r+1, c), (r, c-1), (r, c+1)]
+
+    for nr, nc in candidates:
+        if 0 <= nr < BOYUT and 0 <= nc < BOYUT and (nr, nc) not in self.atılmış:
+            if(nr, nc) not in self.hedef_kuruğu:
+                self.hedef_kuyruğu.append((nr,nc))           
+                                                                                          

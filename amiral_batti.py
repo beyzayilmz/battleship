@@ -52,13 +52,13 @@ def tahta_göster(tahta, gizle=False, başlık=""):
                 satır += f"{GRİ} . {R}"
         print(satır)
 
-def iki_tahta_göster(tahta1, tahta2, başlık1="Sen", başlık2="Rakip"):
+def iki_tahta_göster(tahta1, tahta2, başlık1="Sen", başlık2="Rakip"):  #tahta1 = oyuncu tahtası, tahta2 = rakip tahtası
     """İki tahtayı yan yana göster."""
     print(f"\n {BOLD}{başlık1:<35}{başlık2}{R}")
     header = " " + " ".join(str(i+1).rjust(2) for i in range(BOYUT))
     print(f" {GRİ} {header}  {header}{R}")
     for r in range(BOYUT):
-        def satır_yap(tahta, gizle):
+        def satır_yap(tahta, gizle): #tahtanın tek satırını stringe çeviriyo
             s = f"{BOLD}{HARFLER[r]}{R} "
             for c in range(BOYUT):
                 h = tahta[r][c]
@@ -67,7 +67,7 @@ def iki_tahta_göster(tahta1, tahta2, başlık1="Sen", başlık2="Rakip"):
                 elif h == GEMİ and not gizle: s += f"{YEŞİL} G {R}"
                 else: s += f"{GRİ} . {R}"
             return s
-        print(satır_yap(tahta1, False) + " " + satır_yap(tahta2, True))
+        print(satır_yap(tahta1, False) + " " + satır_yap(tahta2, True)) #sol tahta gemiler görünür, sağ tahta gemiler görünmez
 
 #gemi yerleştirme
 def geçerli_mi(tahta, r, c, boyut, yön):
@@ -253,4 +253,24 @@ def sonuç_işle(self, r, c, isabet, battı, gemi_boyutu = None):
     elif isabet:
         self.isabet_kümesi.append((r,c))
         self.eksen_güncelle()
-        self.komşuları_ekle(r,c)        
+        self.komşuları_ekle(r,c)       
+
+#atış yap
+def ateş_et(self, tahta):
+    hedef = self.hedef_seç()
+    if hedef is None:
+        return None, None, False, False, None
+
+    r, c = hedef
+    isabet = tahta[r][c] == GEMİ
+
+    if isabet:   
+        tahta[r][c] = ISABET
+    else:
+        tahta[r][c] = KAÇIRMA
+
+    #gemi battı mı kontrol et
+    battı, gemi_adı, gemi_boyutu = gemi_battı_mı(tahta, r, c) #TODO: gemi battı mı fonksyionu eklenecek
+    self.sonuç_işe(r, c, isabet, battı, gemi_boyutu)
+
+    return r, c, isabet, battı, gemi_adı               

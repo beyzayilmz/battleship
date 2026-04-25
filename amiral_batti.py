@@ -230,5 +230,13 @@ def komşuları_ekle(self, r, c):
             if(nr, nc) not in self.hedef_kuruğu:
                 self.hedef_kuyruğu.append((nr,nc))  
 
-#TODO: eksen güncelleme                         
+def eksen_güncelle(self):
+    if len(self.isabet_kümesi) >=2:
+        satırlar = set(r for r, _ in self.isabet_kümesi)
+        sütunlar = set(c for _, c in self.isabet_kümesi)
+        if len(satırlar) == 1:
+            self.eksen = "Y"
+        elif len(sütunlar) == 1:
+            self.eksen = "D"
+                                    
                                                                                           

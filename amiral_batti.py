@@ -228,5 +228,7 @@ def komşuları_ekle(self, r, c):
     for nr, nc in candidates:
         if 0 <= nr < BOYUT and 0 <= nc < BOYUT and (nr, nc) not in self.atılmış:
             if(nr, nc) not in self.hedef_kuruğu:
-                self.hedef_kuyruğu.append((nr,nc))           
+                self.hedef_kuyruğu.append((nr,nc))  
+
+#TODO: eksen güncelleme                         
                                                                                           

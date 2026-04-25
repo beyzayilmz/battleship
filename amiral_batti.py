@@ -32,7 +32,7 @@ BOLD      = "\033[1m"
 
 #tahta
 def yeni_tahta():
-    return [[BOŞ] * BOYUT for _ in range(BOYUT)]
+    return [[BOŞ] * BOYUT for _ in range(BOYUT)] #10x10 boyutunda boş yun tahtası oluşturur
 
 def tahta_göster(tahta, gizle=False, başlık=""):
     """Tahtayı renkli şekilde yazdır. gizle=True → gemileri gösterme."""
@@ -238,5 +238,19 @@ def eksen_güncelle(self):
             self.eksen = "Y"
         elif len(sütunlar) == 1:
             self.eksen = "D"
-                                    
-                                                                                          
+
+#atış sonucunu işle
+def sonuç_işle(self, r, c, isabet, battı, gemi_boyutu = None):
+    self.atılmış.add((r,c))
+
+    if battı and gemi_boyutu:
+        #gemi battı : kalan gemi listesinden çıkar, isabetleri temizle
+        if gemi_boyutu in self.kalan_gemiler:
+            self.kalan_gemiler.remove(gemi_boyutu)
+        self.isabet_kümesi = []
+        self.hedef_kuyruğu = []
+        self.eksen = None
+    elif isabet:
+        self.isabet_kümesi.append((r,c))
+        self.eksen_güncelle()
+        self.komşuları_ekle(r,c)        

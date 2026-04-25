@@ -70,28 +70,31 @@ def iki_tahta_göster(tahta1, tahta2, başlık1="Sen", başlık2="Rakip"):  #tah
         print(satır_yap(tahta1, False) + " " + satır_yap(tahta2, True)) #sol tahta gemiler görünür, sağ tahta gemiler görünmez
 
 #gemi yerleştirme
-def geçerli_mi(tahta, r, c, boyut, yön):
+def geçerli_mi(tahta, r, c, boyut, yön): #tahta: mevcut tahta dolu hücreleri görmek için
+                                         #r,c: geminin başlayacağı satır ve sütun
+                                         #boyut: geminin kaplayacağı hücre sayısı
+                                         #yön: "Y" yatay, "D" dikey
     "gemi bu konuma sığar mı"
     for i in range(boyut):
-        nr = r + (i if yön == "D" else 0)
-        nc = c + (i if yön == "Y" else 0)
-        if not ( 0 <= nr < BOYUT and 0 <= nc < BOYUT):
+        nr = r + (i if yön == "D" else 0) #yatay ise satır değişmez, dikey ise satır artar
+        nc = c + (i if yön == "Y" else 0) #yatay ise sütun artar, dikey ise sütun değişmez
+        if not ( 0 <= nr < BOYUT and 0 <= nc < BOYUT): #tahta sınırları dışında mı
             return False
-        if tahta[nr][nc] != BOŞ:
+        if tahta[nr][nc] != BOŞ: #bu hücre zaten dolu mu
             return False
     return True
 
-def gemi_yerleştir(tahta, boyut):
+def gemi_yerleştir(tahta, boyut): #boyut: yerleştirilecek geminin boyutu
     """rastgele geçerli konuma gemi yerleştir"""
     while True:
-        yön= random.choic(["Y", "D"])
-        r = random.randint(0, BOYUT - 1)
-        c = random.randint(0, BOYUT - 1)
-        if geçerli_mi(tahta, r, c, boyut, yön):
+        yön= random.choice(["Y", "D"]) #listeden rastgele bir eleman seçer
+        r = random.randint(0, BOYUT - 1) #0 ile 9 arasında rastgele bir sayı üretir (satır)
+        c = random.randint(0, BOYUT - 1) #0 ile 9 arasında rastgele bir sayı üretir (sütun)
+        if geçerli_mi(tahta, r, c, boyut, yön):  #taşmıyor ve boş mu? True döndürürse if bloğuna girer
             for i in range(boyut):    
-                nr = r + (i if yön == "D" else 0)
+                nr = r + (i if yön == "D" else 0) #geçerli_mi kontrol eder burada aynı işlemle yazar
                 nc = c + (i if yön == "Y" else 0)
-                tahta[nr][nc] = GEMİ
+                tahta[nr][nc] = GEMİ #gemiyi tahtaya yerleştirir
             return ( r, c, yön)
 
 def tahtayı_doldur(tahta):
